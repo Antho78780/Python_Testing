@@ -1,10 +1,11 @@
 import json
+import datetime
 from flask import Flask,render_template,request,redirect,flash,url_for
 
 
 def loadClubs():
     with open('clubs.json') as c:
-         listOfClubs = json.load(c)['clubs']   
+         listOfClubs = json.load(c)['clubs']  
          return listOfClubs
 
 
@@ -22,7 +23,6 @@ clubs = loadClubs()
 
 @app.route('/')
 def index():
-    # FEATURE: 
     return render_template('index.html', clubs=clubs)
 
 @app.route('/showSummary',methods=['POST'])
@@ -49,14 +49,15 @@ def book(competition,club):
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    
+    now = datetime.datetime.now()
+    date_tournament = datetime.datetime.strptime(competition["date"], "%Y-%m-%d %H:%M:%S")
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
     club["points"] = int(club["points"])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])
     
     # BUG: résolue
-    if placesRequired <= club["points"] and placesRequired > 0 and placesRequired <= competition["numberOfPlaces"]:
+    if placesRequired <= club["points"] and placesRequired > 0 and placesRequired <= competition["numberOfPlaces"] and date_tournament >= now:
         club["points"] -= placesRequired
         competition["numberOfPlaces"]-=placesRequired
         flash('Great-booking complete!') 
