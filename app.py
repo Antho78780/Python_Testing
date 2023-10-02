@@ -14,10 +14,9 @@ def loadCompetitions():
          listOfCompetitions = json.load(comps)['competitions']
          return listOfCompetitions
 
-
 app = Flask(__name__)
 app.secret_key = 'something_special'
-
+   
 competitions = loadCompetitions()
 clubs = loadClubs()
 
@@ -38,38 +37,33 @@ def showSummary():
 
 @app.route('/book/<competition>/<club>')
 def book(competition,club):
-    foundClub = [c for c in clubs if c['name'] == club][0]
-    foundCompetition = [c for c in competitions if c['name'] == competition][0]
-    if foundClub and foundCompetition:
+    try:
+        foundClub = [c for c in clubs if c['name'] == club][0]
+        foundCompetition = [c for c in competitions if c['name'] == competition][0]
         return render_template('booking.html',club=foundClub,competition=foundCompetition)
-    else:
+    except IndexError:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=competitions)
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    now = datetime.datetime.now()
-    date_tournament = datetime.datetime.strptime(competition["date"], "%Y-%m-%d %H:%M:%S")
     club = [c for c in clubs if c['name'] == request.form['club']][0]
+    date_now = datetime.datetime.now()
+    date_tournament = datetime.datetime.strptime(competition["date"], "%Y-%m-%d %H:%M:%S")
     placesRequired = int(request.form['places'])
     club["points"] = int(club["points"])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])
     
     # BUG: résolue
-    if placesRequired <= club["points"] and placesRequired > 0 and placesRequired <= competition["numberOfPlaces"] and date_tournament >= now:
+    if placesRequired <= club["points"] and placesRequired > 0 and placesRequired <= competition["numberOfPlaces"] and date_tournament >= date_now:
         club["points"] -= placesRequired
         competition["numberOfPlaces"]-=placesRequired
         flash('Great-booking complete!') 
         return render_template('welcome.html', club=club, competitions=competitions) 
         
     else:
-        if placesRequired > club["points"]:
-            flash("you don't have enough points")
-        elif placesRequired < 0:
-            flash("incorrect value")
-        elif placesRequired > competition["numberOfPlaces"]:
-            flash("there are not enough places")
+        flash("Something went wrong-please try again")
         return render_template("booking.html", club=club, competition=competition)
         
     
