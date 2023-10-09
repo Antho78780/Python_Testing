@@ -1,6 +1,6 @@
 from app import app, loadClubs, loadCompetitions 
 from flask_testing import TestCase 
-import json 
+from unittest.mock import patch, mock_open
 
 class TestClass(TestCase): 
 
@@ -19,14 +19,21 @@ class TestClass(TestCase):
         self.assert_context("clubs", self.clubs) 
         assert response.status_code == 200 
 
+    def test_loadClubs(self):
+        with patch("builtins.open", mock_open(
+            read_data= '{"clubs":[{"name":"test","email":"test","points":"test"}]}'
+            )):
+            club = loadClubs()
+            self.assertEqual(club, [{'name': 'test', 'email': 'test', 'points': 'test'}])
 
-    def test_load_json(self): 
-        with open("test.json") as file: 
-            list_test = json.load(file)["testJson"] 
-            expected_value = [{"name":"test"}] 
-            assert list_test == expected_value 
-
- 
+    def test_loadCompetitions(self):
+        with patch("builtins.open", mock_open(
+            read_data= '{"competitions":[{"name": "test", "date": "test", "numberOfPlaces": "test"}]}'
+            )):
+            competitions = loadCompetitions()
+            self.assertEqual(competitions, [{"name": "test", "date": "test", "numberOfPlaces": "test"}])
+                   
+        
     def test_display(self): 
         response = self.create_app().test_client().get("/display") 
         self.assert_template_used("display.html") 
