@@ -32,8 +32,7 @@ class TestClass(TestCase):
             )):
             competitions = loadCompetitions()
             self.assertEqual(competitions, [{"name": "test", "date": "test", "numberOfPlaces": "test"}])
-                   
-        
+                     
     def test_display(self): 
         response = self.create_app().test_client().get("/display") 
         self.assert_template_used("display.html") 
@@ -47,14 +46,12 @@ class TestClass(TestCase):
         self.assert_context("club", self.foundClub) 
         assert response.status_code == 200 
 
- 
     def test_errorEmail(self): 
         response = self.create_app().test_client().post("/showSummary", data={"email": "test@gmail.com"}) 
         self.assert_template_used("index.html") 
         self.assert_context("clubs", self.clubs) 
         assert response.status_code == 200 
 
- 
     def test_url(self): 
         response = self.create_app().test_client().get(f'/book/{self.foundCompetition["name"]}/{self.foundClub["name"]}') 
         self.assert_template_used("booking.html") 
@@ -62,14 +59,12 @@ class TestClass(TestCase):
         self.assert_context("competition", self.foundCompetition) 
         assert response.status_code == 200 
 
- 
     def test_errorUrl(self): 
         response = self.create_app().test_client().get("/book/name_competition/name_club") 
         self.assert_template_used("welcome.html") 
         self.assert_context("club", "name_club") 
         self.assert_context("competitions", self.competitions) 
         assert response.status_code == 200 
-
 
     def test_purchasePlaces(self): 
         places_user = 5 
@@ -83,18 +78,15 @@ class TestClass(TestCase):
         self.assert_context("competitions", self.competitions) 
         assert response.status_code == 200 
 
-
     def test_errorPurchasePlaces(self): 
         places_user = 30 
         self.foundClub["points"] = int(self.foundClub["points"]) 
         self.foundCompetition["numberOfPlaces"] = int(self.foundCompetition["numberOfPlaces"]) 
-
         response = self.create_app().test_client().post(f"/purchasePlaces", data={"club": self.foundClub["name"], "competition": self.foundCompetition["name"], "places": places_user}) 
         self.assert_template_used("booking.html") 
         self.assert_context("club", self.foundClub) 
         self.assert_context("competition", self.foundCompetition) 
         assert response.status_code == 200 
-
 
     def test_logout(self): 
         response = self.create_app().test_client().get("/logout") 
