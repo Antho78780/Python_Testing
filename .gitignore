@@ -1,9 +1,3 @@
-bin
-include
-lib
-.Python
-.envrc
 __pycache__
 env
 .idea
-.coverage
