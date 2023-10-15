@@ -49,5 +49,6 @@ vir
     We also like to show how well we're testing, so there's a module called 
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
 
-    - For launch the test coverage type <code>coverage report -m</code> and for launch all tests type <code>pytest</code>.
-    - For launch the test of performance type <code>cd tests/performance_tests folder</code> and type <code>locust</code>.
+    - For launch the test coverage type <code>coverage report</code> and if you want launch the report html type <code>coverage html</code>
+    - For Launch all tests type<code>pytest</code>
+    - For launch the test of performance type <code>cd tests/performance_tests</code> and type <code>locust</code>.
