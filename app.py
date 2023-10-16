@@ -54,7 +54,7 @@ def purchasePlaces():
     club["points"] = int(club["points"])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])
 
-    if placesRequired <= club["points"] and placesRequired > 0 and placesRequired <= competition["numberOfPlaces"] and date_tournament >= date_now:
+    if placesRequired <= club["points"] and placesRequired > 0 and placesRequired <= competition["numberOfPlaces"] and date_tournament >= date_now and placesRequired <= 12:
         club["points"] -= placesRequired
         competition["numberOfPlaces"]-=placesRequired
         flash('Great-booking complete!') 
